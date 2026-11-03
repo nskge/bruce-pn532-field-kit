@@ -18,7 +18,7 @@ There are two ways to use the added MIFARE Classic features:
 
 The **bridge** passes PN532 commands between the computer and the PN532 chip inside the T-Embed. The host launcher enters and exits bridge mode automatically; you do not need to open the bridge menu first. `mfoc` runs on the computer and may recover MIFARE Classic keys when a known key and a susceptible card allow its nested method. It is not installed in the firmware. The on-device key list only tests candidates already in the list. Neither method guarantees access to every card.
 
-For a clean Debian computer, follow the [complete test walkthrough](docs/test-from-scratch.md) or the shorter [quick start](docs/debian-quickstart.md). For Windows, WSL, other Linux distributions, or macOS, see [host setup](docs/platforms.md). Keep card dumps and recovered keys private.
+For a clean Debian computer, follow the [complete test walkthrough](docs/test-from-scratch.md) or the shorter [quick start](docs/debian-quickstart.md). For Windows, Linux, and macOS, use the [OS setup guide](docs/os-setup.md). Keep card dumps and recovered keys private.
 
 Bruce is a versatile ESP32 firmware packed with offensive-security tools, built to make Red Team operations fast and portable.
 
