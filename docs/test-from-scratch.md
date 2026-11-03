@@ -39,7 +39,7 @@ With the card still centered:
 
 This runs `mfoc` **on Debian** through the T-Embed's PN532. It needs a known key on the card and a card whose nonce behavior permits its nested method. `mfoc` tests common defaults; if you know a different sector key, the launcher accepts `--known-key` followed by its 12 hexadecimal digits. A working reader does not guarantee recovery.
 
-On success, the launcher saves a timestamped `.mfd` in `~/Downloads`. For a MIFARE Classic 1K full dump, the file is 1024 bytes. Check locally:
+On success, the launcher saves a timestamped `.mfd` in `~/Downloads`. A MIFARE Classic 1K contains 1024 bytes, but dump file sizes depend on the tool and build: the tested native Windows `mfoc` produced a 4096-byte file with the 1K card contents in its first 1024 bytes. A file size alone does not prove all keys were recovered. Check locally:
 
 ```sh
 ls -lh ~/Downloads/bruce-nfc-*.mfd
