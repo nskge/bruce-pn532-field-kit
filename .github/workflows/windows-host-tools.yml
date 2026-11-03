@@ -1,0 +1,24 @@
+name: Build Windows NFC host tools
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/build-windows-host.sh'
+      - 'tools/patches/**'
+      - 'tools/compat/**'
+      - '.github/workflows/windows-host-tools.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cross compiler and build tools
+        run: sudo apt-get update && sudo apt-get install -y mingw-w64 cmake autoconf automake libtool pkg-config
+      - name: Build from pinned official sources
+        run: bash tools/build-windows-host.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-nfc-host-tools
+          path: dist/windows-host/

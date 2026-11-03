@@ -1,0 +1,28 @@
+diff --git a/contrib/win32/stdlib.c b/contrib/win32/stdlib.c
+--- a/contrib/win32/stdlib.c
++++ b/contrib/win32/stdlib.c
+@@ -37,21 +37,11 @@
+ //There is no setenv()and unsetenv() in windows,but we can use putenv() instead.
+ int setenv(const char *name, const char *value, int overwrite)
+ {
+-  char *env = getenv(name);
+-  if ((env && overwrite) || (!env)) {
+-    char *str[32];
+-    strcpy(str, name);
+-    strcat(str, "=");
+-    strcat(str, value);
+-    return putenv(str);
+-  }
+-  return -1;
++  if (!overwrite && getenv(name)) return 0;
++  return _putenv_s(name, value);
+ }
+ 
+ void unsetenv(const char *name)
+ {
+-  char *str[32];
+-  strcpy(str, name);
+-  strcat(str, "=");
+-  putenv(str);
++  _putenv_s(name, "");
+ }
