@@ -2,6 +2,8 @@
 
 This guide uses a LilyGo T-Embed CC1101 already running this fork, its integrated PN532, and a MIFARE Classic card you are authorized to test. Keep a complete private backup before changing a card's keys or access bits. No card key or dump is in this repository.
 
+The T-Embed is the **NFC reader**; USB connects it to Debian. The **PN532 bridge** forwards commands from Debian's `libnfc` to the reader. `nfc-list` detects the card, and `mfoc` runs on Debian to attempt nested MIFARE Classic key recovery. The launcher starts and stops bridge mode automatically. You do not need to select **PN532 USB bridge** on the device before running these commands. On-device key-list checks under **RFID > MIFARE keys** work without Debian.
+
 ## Install and connect
 
 ```sh
@@ -12,7 +14,7 @@ cd bruce-pn532-field-kit
 ./tools/nfc-unix.sh list
 ```
 
-The launcher installs missing `libnfc-bin`, `mfoc`, and `pyserial` on Debian. It creates a Python environment inside this checkout. Connect the T-Embed by USB and place the card against its PN532 antenna before running `list`. The T-Embed may restart when the serial port opens; wait for the reader result.
+The launcher installs missing `libnfc-bin`, `mfoc`, and `pyserial` on Debian. It creates a Python environment inside this checkout. Connect the T-Embed by USB and place the card against its PN532 antenna before running `list`. `list` checks the reader and card only; it does not recover keys or save a dump. The T-Embed may restart when the serial port opens; wait for the reader result.
 
 If the script cannot open the USB serial port, identify it with `ls -l /dev/serial/by-id/` or `ls -l /dev/ttyACM*`. Pass `--port /dev/ttyACM0` if automatic detection finds more than one matching ESP32-S3. Debian often grants serial access through the `dialout` group; if your account lacks it, add the account with `sudo usermod -aG dialout "$USER"`, then sign out and back in. Check the group with `id -nG` before retrying.
 
@@ -22,7 +24,7 @@ If the script cannot open the USB serial port, identify it with `ls -l /dev/seri
 ./tools/nfc-unix.sh recover
 ```
 
-If you know a sector key, you can pass it as `--known-key` followed by exactly 12 hexadecimal digits. `mfoc` may recover keys on susceptible cards; a successful `list` does not guarantee recovery. The launcher writes a timestamped `.mfd` file to `~/Downloads`. Keep the dump private and do not commit it or paste keys into an issue. Record its filename, byte count, and SHA-256 locally:
+`recover` runs `mfoc` on Debian through the bridge. `mfoc` needs at least one known sector key and a card susceptible to its nested method; it tries common defaults unless you supply a known key with `--known-key` followed by exactly 12 hexadecimal digits. A successful `list` does not guarantee recovery. On success, the launcher writes a timestamped `.mfd` file to `~/Downloads`. Keep the dump private and do not commit it or paste keys into an issue. Record its filename, byte count, and SHA-256 locally:
 
 ```sh
 ls -lh ~/Downloads/bruce-nfc-*.mfd

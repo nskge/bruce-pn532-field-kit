@@ -4,6 +4,22 @@
 
 > **Bruce PN532 Field Kit (experimental fork):** This checkout adds standalone MIFARE Classic dictionary options, a PN532 USB bridge, and improved partial-sector reads for the LilyGo T-Embed CC1101. It is not an official Bruce release. Start with [the project overview](docs/overview.md), [Debian quick start](docs/debian-quickstart.md), [platform setup](docs/platforms.md), [architecture](docs/architecture.md), and [the bridge guide](docs/pn532-bridge.md).
 
+## Start here: this fork's NFC workflow
+
+This fork targets the **LilyGo T-Embed CC1101 with its integrated PN532**. The device must already run this fork's firmware; the official Bruce Web Flasher mentioned later on this page installs upstream Bruce, not these additions. See [build and flash notes](docs/pn532-bridge.md#build) before installing firmware on another device.
+
+There are two ways to use the added MIFARE Classic features:
+
+| Goal | What to use | Computer required? |
+| --- | --- | --- |
+| Test common or saved keys and read accessible sectors | **RFID > MIFARE keys** on the T-Embed | No |
+| Import candidate keys from internal storage or SD | **RFID > MIFARE keys > Import** | No |
+| Let `libnfc` detect a tag or let `mfoc` attempt nested key recovery | **PN532 USB bridge** plus a host launcher | Yes, over USB |
+
+The **bridge** passes PN532 commands between the computer and the PN532 chip inside the T-Embed. The host launcher enters and exits bridge mode automatically; you do not need to open the bridge menu first. `mfoc` runs on the computer and may recover MIFARE Classic keys when a known key and a susceptible card allow its nested method. It is not installed in the firmware. The on-device key list only tests candidates already in the list. Neither method guarantees access to every card.
+
+For a clean Debian computer, follow the [complete test walkthrough](docs/test-from-scratch.md) or the shorter [quick start](docs/debian-quickstart.md). For Windows, WSL, other Linux distributions, or macOS, see [host setup](docs/platforms.md). Keep card dumps and recovered keys private.
+
 Bruce is a versatile ESP32 firmware packed with offensive-security tools, built to make Red Team operations fast and portable.
 
 It also supports [M5Stack](https://shop.m5stack.com), [LILYGO](https://lilygo.cc) , [RockBase IoT](https://www.rockbaseiot.com) and [Elecrow](https://www.elecrow.com) products, and works great with the Cardputer, Sticks, M5Cores, T-Decks and T-Embeds.
