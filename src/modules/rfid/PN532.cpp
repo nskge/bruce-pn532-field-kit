@@ -1146,10 +1146,17 @@ int PN532::authenticate_mifare_classic(byte block) {
     // Try the short built-in list for both key types before a potentially
     // large saved dictionary. A common Key B can read the sector immediately.
     if (_useSavedMifareKeys && !successA && !successB) {
-        bruceConfig.ensureMifareKeysLoaded();
+        if (!_mifareCandidates) bruceConfig.ensureMifareKeysLoaded();
+        const auto &candidates = _mifareCandidates ? *_mifareCandidates : bruceConfig.mifareKeys;
         uint8_t candidate[6];
-        for (const auto &mifKey : bruceConfig.mifareKeys) {
+        size_t tried = 0;
+        for (const auto &mifKey : candidates) {
             if (returnToMenu || check(EscPress)) { returnToMenu = true; return FAILURE; }
+            if ((tried++ % 16) == 0) {
+                const unsigned sector = block < 128 ? block / 4 : 32 + (block - 128) / 16;
+                progressHandler(tried, candidates.size(), "Sector " + String(sector) + " - keys");
+                Serial.printf("MFC_PROGRESS sector=%u tried=%u total=%u\n", sector, (unsigned)tried, (unsigned)candidates.size());
+            }
             if (mifKey.length() != 12) continue;
             for (size_t i = 0; i < mifKey.length(); i += 2) {
                 candidate[i / 2] = strtoul(mifKey.substring(i, i + 2).c_str(), NULL, 16);

@@ -35,6 +35,7 @@ public:
     TagOMatic();
     TagOMatic(RFID_State initial_state);
     TagOMatic(RFID_State initial_state, bool useSavedMifareKeys);
+    TagOMatic(RFID_State initial_state, const std::set<String> *candidates);
     ~TagOMatic();
 // Headless constructor
 #if !defined(LITE_VERSION) && !defined(DISABLE_INTERPRETER)
@@ -61,6 +62,7 @@ private:
     RFIDInterface *_rfid;
     RFID_State _initial_state;
     bool _useSavedMifareKeys = true;
+    const std::set<String> *_mifareCandidates = nullptr;
     bool _read_uid = false;
     bool _ndef_created = false;
     uint32_t _lastReadTime = 0;

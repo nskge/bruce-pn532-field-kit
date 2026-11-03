@@ -14,6 +14,7 @@ There are two ways to use the added MIFARE Classic features:
 | --- | --- | --- |
 | Test common or saved keys and read accessible sectors | **RFID > MIFARE keys** on the T-Embed | No |
 | Import candidate keys from internal storage or SD | **RFID > MIFARE keys > Import** | No |
+| Test only a selected key file | **RFID > MIFARE keys > Try SD file** or **Try internal file** | No |
 | Let `libnfc` detect a tag or let `mfoc` attempt nested key recovery | **PN532 USB bridge** plus a host launcher | Yes, over USB |
 
 The **bridge** passes PN532 commands between the computer and the PN532 chip inside the T-Embed. The host launcher enters and exits bridge mode automatically; you do not need to open the bridge menu first. `mfoc` runs on the computer and may recover MIFARE Classic keys when a known key and a susceptible card allow its nested method. It is not installed in the firmware. The on-device key list only tests candidates already in the list. Neither method guarantees access to every card.

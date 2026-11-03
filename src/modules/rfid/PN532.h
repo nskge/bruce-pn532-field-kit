@@ -40,6 +40,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////
     bool begin();
     void setUseSavedMifareKeys(bool enabled) { _useSavedMifareKeys = enabled; }
+    void setMifareCandidates(const std::set<String> *candidates) { _mifareCandidates = candidates; }
 
     /////////////////////////////////////////////////////////////////////////////////////
     // Operations
@@ -57,6 +58,7 @@ public:
 private:
     bool _use_i2c;
     bool _useSavedMifareKeys = true;
+    const std::set<String> *_mifareCandidates = nullptr;
     CONNECTION_TYPE _connection_type;
 
     /////////////////////////////////////////////////////////////////////////////////////

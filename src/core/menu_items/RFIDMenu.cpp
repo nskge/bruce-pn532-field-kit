@@ -14,6 +14,19 @@
 #include "modules/rfid/tag_o_matic.h"
 
 namespace {
+void tryMifareFile(FS &fs) {
+    if (&fs == &LittleFS && !setupLittleFS()) { displayError("Internal storage unavailable", true); return; }
+    String path = loopSD(fs, true, "TXT|DIC|KEYS|CONF", "/BruceRFID");
+    if (path.isEmpty()) return;
+    std::set<String> candidates;
+    size_t skipped = 0;
+    if (!MifareKeysManager::readCandidates(fs, path, candidates, skipped) || candidates.empty()) {
+        displayError("Invalid or empty key list", true);
+        return;
+    }
+    TagOMatic(TagOMatic::READ_MODE, &candidates);
+}
+
 void importMifareWordlist(FS &fs) {
     if (&fs == &LittleFS && !setupLittleFS()) {
         displayError("Internal storage unavailable", true);
@@ -39,8 +52,10 @@ void mifareDictionaryMenu() {
             displayInfo(String(bruceConfig.mifareKeys.size()) + " saved keys", true);
         }},
         {"Import internal", []() { importMifareWordlist(LittleFS); }},
+        {"Try internal file", []() { tryMifareFile(LittleFS); }},
     };
     if (setupSdCard()) options.push_back({"Import from SD", []() { importMifareWordlist(SD); }});
+    if (sdcardMounted) options.push_back({"Try SD file", []() { tryMifareFile(SD); }});
     loopOptions(options, MENU_TYPE_SUBMENU, "MIFARE keys");
 }
 } // namespace

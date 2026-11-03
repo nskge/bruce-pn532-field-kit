@@ -82,11 +82,11 @@ void MifareKeysManager::clear(std::set<String> &keys) {
     log_i("All keys cleared");
 }
 
-bool MifareKeysManager::importFromFile(
-    FS &sourceFS, const String &path, std::set<String> &keys, size_t &added, size_t &skipped
+bool MifareKeysManager::readCandidates(
+    FS &sourceFS, const String &path, std::set<String> &candidates, size_t &skipped
 ) {
-    added = 0;
     skipped = 0;
+    candidates.clear();
     File file = sourceFS.open(path, FILE_READ);
     if (!file) return false;
     if (file.size() > 128 * 1024) {
@@ -94,8 +94,6 @@ bool MifareKeysManager::importFromFile(
         return false;
     }
 
-    ensureLoaded(keys);
-    std::set<String> candidates;
     String line;
     bool overflow = false;
     while (file.available()) {
@@ -125,6 +123,17 @@ bool MifareKeysManager::importFromFile(
         if (isValidHexKey(line)) candidates.insert(line);
         else skipped++;
     }
+
+    return candidates.size() <= 4096;
+}
+
+bool MifareKeysManager::importFromFile(
+    FS &sourceFS, const String &path, std::set<String> &keys, size_t &added, size_t &skipped
+) {
+    added = 0;
+    std::set<String> candidates;
+    if (!readCandidates(sourceFS, path, candidates, skipped)) return false;
+    ensureLoaded(keys);
 
     // A bounded file keeps both RAM use and on-device RF scan time manageable.
     size_t newCount = 0;

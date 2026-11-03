@@ -10,9 +10,12 @@ An experimental Bruce firmware fork for the LilyGo T-Embed CC1101 and its integr
 | MIFARE common-key check | T-Embed | Try Bruce's 15 built-in MIFARE Classic keys while reading sectors. |
 | MIFARE saved-list check | T-Embed | Try built-in keys plus valid 6-byte keys in `/BruceRFID/keys.conf`. |
 | Wordlist import | T-Embed | Select a `.txt`, `.dic`, `.keys`, or `.conf` file on SD or LittleFS; merge its valid one-key-per-line entries into `keys.conf`. |
+| Direct wordlist check | T-Embed | Select a list on SD or internal storage and test only that file plus the built-in keys, without changing the saved list. |
 | PN532 USB bridge | T-Embed + host | Forward PN532 commands to libnfc. It allows host tools such as `mfoc` to use the built-in PN532. |
 
 Under **RFID > MIFARE keys**, choose **Try common keys**, **Try saved list**, **Import internal**, or **Import from SD**. The last item appears when an SD card mounts. Place a wordlist in `/BruceRFID` for the file picker. Entries are exactly 12 hexadecimal characters (6 bytes), one per line. Blank lines and `#` or `//` comments are ignored. Imports are limited to 128 KiB and a total of 4096 saved keys. Imports merge with existing keys; they do not erase them. The normal **Read tag** option also uses both built-in and saved keys.
+
+To try a short list without scanning the entire saved dictionary, choose **Try internal file** or **Try SD file** and select the file. These options do not import or modify saved keys. The file limit is 128 KiB and 4096 unique keys. The reader displays per-sector key-search progress; Back cancels the scan. A long dictionary still takes time for each authentication attempt.
 
 The key checks are a **dictionary attack**: the device tests candidate keys against MIFARE Classic authentication. They do not enumerate all 2^48 possible keys and do not calculate unknown keys from card responses. A large list can take a long time because each candidate needs an RF exchange, and a stable card position matters. Press Back to cancel a long on-device read. MIFARE Classic uses separate keys A and B per sector and access bits determine what authenticated operations are permitted.
 

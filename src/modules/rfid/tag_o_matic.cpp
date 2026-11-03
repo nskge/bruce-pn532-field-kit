@@ -40,6 +40,12 @@ TagOMatic::TagOMatic(RFID_State initial_state, bool useSavedMifareKeys) {
     setup();
 }
 
+TagOMatic::TagOMatic(RFID_State initial_state, const std::set<String> *candidates) {
+    _initial_state = initial_state;
+    _mifareCandidates = candidates;
+    setup();
+}
+
 TagOMatic::~TagOMatic() {
     if (_scanned_set.size() > 0) {
         save_scan_result();
@@ -68,6 +74,7 @@ void TagOMatic::set_rfid_module() {
     if (_rfid && (bruceConfigPins.rfidModule == PN532_I2C_MODULE ||
                   bruceConfigPins.rfidModule == PN532_SPI_MODULE)) {
         static_cast<PN532 *>(_rfid)->setUseSavedMifareKeys(_useSavedMifareKeys);
+        static_cast<PN532 *>(_rfid)->setMifareCandidates(_mifareCandidates);
     }
 }
 

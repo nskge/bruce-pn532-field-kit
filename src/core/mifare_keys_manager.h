@@ -28,6 +28,7 @@ public:
     // Merge a user-selected one-key-per-line text file into keys.conf.
     // Returns false for I/O errors or files larger than 128 KiB.
     static bool importFromFile(FS &sourceFS, const String &path, std::set<String> &keys, size_t &added, size_t &skipped);
+    static bool readCandidates(FS &sourceFS, const String &path, std::set<String> &candidates, size_t &skipped);
 
     // Validation
     static bool isValidHexKey(const String &key);
